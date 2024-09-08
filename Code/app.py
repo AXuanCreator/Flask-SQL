@@ -1,12 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 from flask_cors import CORS
 
-from Config import db, AppConfig
+from Config import db, AppConfig, User, Book
 from Admin import admin_bp
 from Book import book_bp
 from User import user_bp
 from Borrow import borrow_bp
-from Book import bookcategory_bp
+from Book import bookcategory_bp, BookServices
 from User.Mail import mail
 
 
@@ -44,7 +44,20 @@ app = create_app()
 ########################################################################
 @app.route('/', methods=['GET'])
 def main():
-	return render_template('main.html')
+	is_logged = True if session.get('user_login') else False
+	book_list = []
+
+	if is_logged and session.get('user_login') != 'admin':
+		id = User.query.filter_by(username=session.get('user_login')).first().id
+		book_id_list = BookServices.recommend_book_module(id)
+		book_list = [Book.query.filter_by(id=id).first().title for id in book_id_list]
+
+	return render_template('main.html', is_logged=is_logged, recommended_books=book_list)
+
+
+@app.route('/test')
+def test():
+	return render_template('admin/admin.html', id=1)
 
 
 if __name__ == '__main__':

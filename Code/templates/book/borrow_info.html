@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='/common/css/info.css') }}" rel="stylesheet">
+    <title>借阅列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .book {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .borrow-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<h1>借阅列表</h1>
+<a href="{{ url_for('main') }}" class="tooltip-container color" style="position: absolute; top: 50px; left: 1500px;  --tooltip-backgroud: #6ca7ff;">
+    <span class="text">回到主页</span>
+    <span>Click</span>
+</a>
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% else %}
+    {% for borrow in borrows %}
+        <div class="book">
+            <h2>{{ books[borrow.book_id].title }}</h2>
+            <p><strong>借阅时间：</strong>{{ borrow.borrow_date }}</p>
+            <p><strong>应当归还时间：</strong>{{ borrow.return_date }}</p>
+            <form method="POST" action="{{ url_for('borrow.return_book', id=borrow.id) }}">
+                <button type="submit" style="background: #4cdece" class="borrow-button">归还</button>
+            </form>
+            <form method="POST" action="{{ url_for('borrow.renew_book', id=borrow.id) }}">
+                <button type="submit" class="borrow-button" style="margin-top: 30px; background: #de0001 ">续借</button>
+            </form>
+        </div>
+    {% endfor %}
+
+    <div class="pagination">
+        {% if pagination.page > 1 %}
+            <a href="{{ url_for('borrow.book_borrow', page=pagination.page-1, per_page=pagination.per_page) }}{% for k, v in request.args.items() %}{% if k not in ['page', 'per_page'] %}&{{ k }}={{ v }}{% endif %}{% endfor %}">上一页</a>
+        {% endif %}
+
+        <span>第 {{ pagination.page }} 页，共 {{ pagination.pages }} 页</span>
+
+        {% if pagination.page < pagination.pages %}
+            <a href="{{ url_for('borrow.book_borrow', page=pagination.page+1, per_page=pagination.per_page) }}{% for k, v in request.args.items() %}{% if k not in ['page', 'per_page'] %}&{{ k }}={{ v }}{% endif %}{% endfor %}">下一页</a>
+        {% endif %}
+    </div>
+
+    <p>共找到 {{ pagination.total }} 本书</p>
+{% endif %}
+</body>
+</html>

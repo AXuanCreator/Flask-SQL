@@ -3,55 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', filename='/common/css/main.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://coscdn.htmlpage.cn/bootstrap/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://coscdn.htmlpage.cn/html-template/assets/css/page.min.css"/>
-    <title> 首页 </title>
+    <link href="{{ url_for('static', filename='common/css/main.css') }}" rel="stylesheet">
+    <title>Dreams Library - Home</title>
 </head>
 <body>
-<header data-block-type="headers" data-id="1" class="fp-active">
+<header>
     <div class="container">
-        <nav class="navbar navbar-expand-md">
-            <a href="{{ url_for('main') }}" class="navbar-brand"></a>
-            <button type="button" data-toggle="collapse" data-target="#navbarNav1" aria-controls="navbarNav1"
-                    aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler">Send
-            </button>
-            <div id="navbarNav1" class="collapse navbar-collapse">
-                <div id="i29qv" class="c15889">Dreams Library
-                </div>
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                    </li>
-                    <li class="nav-item">
-                    </li>
-                    <a href="{{ url_for('main') }}" class="nav-link">首页 <span class="sr-only">(current)</span></a>
-                    <li class="nav-item">
-                    </li>
-                </ul>
-                <ul class="navbar-nav justify-content-end d-none d-lg-flex ml-md-auto">
-                    <li class="nav-item">
-                    </li>
-                    <li class="nav-item">
-                    </li>
-                    <li class="nav-item">
-                        <a href="https://github.com/AXuanCreator/Flask-Web" class="nav-link">Github</a>
-                    </li>
-                </ul>
-                <a href="{{ url_for('user.user_login') }}" class="btn btn-empty ml-md-3">登陆</a>
-                <a href="{{ url_for('user.user_register') }}" class="btn btn-empty ml-md-3">注册</a>
-            </div>
-        </nav>
+        <div class="header-content">
+            <div class="logo">Dreams Library</div>
+            <nav class="nav">
+                <a href="{{ url_for('user.user_login') }}">Account</a>
+                {% if is_logged %}
+                    <a href="{{ url_for('user.clear_session') }}">Log Out</a>
+                {% endif %}
+                <a href="https://github.com/AXuanCreator/Flask-Web">GitHub</a>
+                <span class="status-dot {% if is_logged %}logged-in{% else %}logged-out{% endif %}"
+                      style="position: absolute; top:19px; left: 1320px"></span>
+            </nav>
+        </div>
     </div>
 </header>
-<div class="htmlpage-row">
-    <div class="htmlpage-cell">
+<main class="main">
+    <div class="container">
+        <h1>Dreams Library</h1>
+        <p style="opacity: 10%;">“ 但在那之前，我，仍有选择的权利 ”</p>
+        <form action="{{ url_for('book.book_info') }}" method="GET" class="search-box">
+            <input type="text" name="title" placeholder="去寻找...">
+            <input type="hidden" name="page" value="1">
+            <input type="hidden" name="per_page" value="10">
+            <button type="submit">搜索</button>
+        </form>
+        <div class="book-showcase">
+            <div class="book-column">
+                <div class="book-item">
+                    <img src="https://axuan-storage.oss-cn-guangzhou.aliyuncs.com/images/flask-web/book1-cndqsjlg-low.jpg"
+                         alt="Book 1">
+                    <p>从你的全世界路过</p>
+                </div>
+                <div class="book-item">
+                    <img src="https://axuan-storage.oss-cn-guangzhou.aliyuncs.com/images/flask-web/book2-nh-low.jpg"
+                         alt="Book 2">
+                    <p>你坏</p>
+                </div>
+            </div>
+            <div class="book-column">
+                <div class="book-item">
+                    <img src="https://axuan-storage.oss-cn-guangzhou.aliyuncs.com/images/flask-web/book3-ybygxmb-low.jpg"
+                         alt="Book 3">
+                    <p>云边有个小卖部</p>
+                </div>
+                <div class="book-item">
+                    <img src="https://axuan-storage.oss-cn-guangzhou.aliyuncs.com/images/flask-web/book4-wdgdsyzhy-low.jpg"
+                         alt="Book 4">
+                    <p>我的孤独是一座花园</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="htmlpage-cell">
+</main>
+<footer>
+    <div class="container">
+        <h2>根据您的借阅记录，为您推荐...</h2>
+        <table class="recommended-books" style="margin: 0 auto; border-collapse: collapse; width: 60%;">
+            <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 10px;">书名</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for book in recommended_books %}
+                <tr>
+                    <td style="border: 1px solid #000; padding: 10px; text-align: center;">{{ book }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
-</div>
-<div class="htmlpage-row" id="iyvek">
-    <div class="htmlpage-cell">
-        <input type="text" id="i58pz" name="search" placeholder="搜索书籍..."/>
-    </div>
-</div>
+</footer>
 </body>
+</html>

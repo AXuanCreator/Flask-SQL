@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='/common/css/info.css') }}" rel="stylesheet">
+    <title>图书列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .book {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .borrow-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>图书列表</h1>
+<a href="{{ url_for('main') }}" class="tooltip-container color"
+   style="position: absolute; top: 50px; left: 1500px;  --tooltip-backgroud: #6ca7ff;">
+    <span class="text">回到主页</span>
+    <span>Click</span>
+</a>
+<a href="{{ url_for('book.book_add') }}" class="tooltip-container color"
+   style="position: absolute; top: 50px; left: 1370px;  --tooltip-backgroud: #6ca7ff;">
+    <span class="text">添加书籍</span>
+    <span>Click</span>
+</a>
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% else %}
+    {% for book in books %}
+        <div class="book">
+            <h2>{{ book.title }}</h2>
+            <p><strong>作者：</strong>{{ book.author }}</p>
+            <p><strong>出版社：</strong>{{ book.publisher }}</p>
+            <p><strong>分类：</strong>{{ book.category.name if book.category else '未分类' }}</p>
+            <form method="GET" action="{{ url_for('book.book_update', id=book.id)}}">
+                <button type="submit" style="background: #4cdece" class="borrow-button">更新</button>
+            </form>
+            <form method="POST" action="{{ url_for('book.book_delete', id=book.id) }}">
+                <button type="submit" class="borrow-button" style="margin-top: 30px; background: #de0001 ">删除</button>
+            </form>
+        </div>
+    {% endfor %}
+
+    <div class="pagination">
+        {% if pagination.page > 1 %}
+            <a href="
+
+                    {{ url_for('book.book_info', page=pagination.page-1, per_page=pagination.per_page) }}{% for k, v in request.args.items() %}{% if k not in ['page', 'per_page'] %}&{{ k }}={{ v }}{% endif %}{% endfor %}">上一页</a>
+        {% endif %}
+
+        <span>第 {{ pagination.page }} 页，共 {{ pagination.total_pages }} 页</span>
+
+        {% if pagination.page < pagination.total_pages %}
+            <a href="
+
+                    {{ url_for('book.book_info', page=pagination.page+1, per_page=pagination.per_page) }}{% for k, v in request.args.items() %}{% if k not in ['page', 'per_page'] %}&{{ k }}={{ v }}{% endif %}{% endfor %}">下一页</a>
+        {% endif %}
+    </div>
+
+    <p>共找到 {{ pagination.total }} 本书</p>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员面板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .info-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+        .update-button {
+            padding: 10px 20px;
+            background-color: transparent; /* 无背景 */
+            color: black;
+            border: 2px solid black; /* 黑色轮廓 */
+            border-radius: 20px; /* 圆角按钮 */
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .update-button:hover {
+            background-color: #ddd; /* 鼠标悬停效果 */
+        }
+        .input-field {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<!-- 侧边栏导航 -->
+<div class="sidebar">
+    <h3>管理员面板</h3>
+    <a href="{{ url_for('admin.admin_info', id=admin.id) }}">管理员信息</a>
+    <a href="{{ url_for('admin.modify_admin_password', id=admin.id) }}">更改密码</a>
+    <a href="{{ url_for('admin.check_logging', id=admin.id) }}">查看日志</a>
+    <a href="{{ url_for('main', id=admin.id) }}">回到主页</a>
+</div>
+
+<!-- 主内容区域 -->
+<div class="content">
+    {% block content %}
+        <!-- 根据具体页面内容填充 -->
+        {% if admin %}
+            <div class="info-box" id="admin-info">
+                <h2>管理员信息</h2>
+                <!-- 将form的action指向admin_info，并传递id参数 -->
+                <form id="admin-form" action="{{ url_for('admin.admin_info', id=admin.id) }}" method="POST">
+                    <p><strong>Username：</strong> {{ admin.username }}</p> <!-- Username 保持只读 -->
+                    <div class="input-field"><strong>Phone：</strong> <input type="text" name="phone" value="{{ admin.phone }}" id="phone"></div>
+                    <div class="input-field"><strong>Name：</strong> <input type="text" name="name" value="{{ admin.name }}" id="name"></div>
+                    <div class="input-field"><strong>Email：</strong> <input type="email" name="email" value="{{ admin.email }}" id="email"></div>
+                    <!-- 更改按钮为submit类型 -->
+                    <button type="submit" class="update-button">确认更新</button>
+                </form>
+            </div>
+        {% else %}
+            <p>请选择一个选项以查看信息。</p>
+        {% endif %}
+    {% endblock %}
+</div>
+</body>
+</html>

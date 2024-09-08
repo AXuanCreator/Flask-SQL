@@ -71,8 +71,9 @@ class BookRating(db.Model):
 	id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
 	rating = db.Column(db.Integer, nullable=False)
 
-	user_id = db.Column(db.BigInteger)
-	book_id = db.Column(db.BigInteger)
-# # Foreign Key
-# user_id = db.Column(db.BigInteger, db.ForeignKey('tb_user.id'))
-# book_id = db.Column(db.BigInteger, db.ForeignKey('tb_book.id'))
+	# user_id = db.Column(db.BigInteger)
+	# book_id = db.Column(db.BigInteger)
+
+	# Foreign Key
+	user_id = db.Column(db.BigInteger, db.ForeignKey('tb_user.id'))
+	book_id = db.Column(db.BigInteger, db.ForeignKey('tb_book.id'))

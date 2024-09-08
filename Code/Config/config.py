@@ -2,19 +2,25 @@
 # 此模块管理所有的配置信息
 ############################### VERSION 1.0 ###############################
 import datetime
+import os
 
 
 class AppConfig():
 	# MySQL
-	HOSTNAME = '127.0.0.1'
-	PORT = '3306'
-	USERNAME = 'root'
-	PASSWORD = '9966330'
-	DATABASE = 'flask-web'  # 架构名
+	# HOSTNAME = '127.0.0.1'
+	# PORT = '3306'
+	# USERNAME = 'root'
+	# PASSWORD = '9966330'
+	# DATABASE = 'flask-web'  # 架构名
+	#
+	# SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8"
+	# SQLALCHEMY_TRACKr_MODIFICATIONS = False
+	# SECRET_KEY = 'your_secret_key'
 
-	SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOSTNAME}:{PORT}/{DATABASE}?charset=utf8"
-	SQLALCHEMY_TRACKr_MODIFICATIONS = False
-	SECRET_KEY = 'your_secret_key'
+	# SQLite
+	DATABASE_FILE = 'flask-web.db'
+	SQLALCHEMY_DATABASE_URI = f'sqlite:///{DATABASE_FILE}'
+	SECRET_KEY = 'fireflysowonderful'
 
 	# FLASK
 	DEBUG = True

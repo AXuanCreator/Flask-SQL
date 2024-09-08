@@ -10,8 +10,8 @@ class BookServices:
 	@staticmethod
 	def insert_book(book_request):
 		"""插入书籍"""
-		request_keys = ['title', 'author', 'category', 'publisher', 'quantity']
-		title, author, category_id, publisher, quantity = (book_request.get(key) for key in request_keys)
+		request_keys = ['title', 'author', 'publisher', 'quantity', 'category_id']
+		title, author, publisher, quantity, category_id = (book_request.get(key) for key in request_keys)
 
 		if any(var is None for var in [title, author, category_id, publisher, quantity]):
 			return ReturnCode.FAIL
@@ -33,23 +33,29 @@ class BookServices:
 		"""根据关键词获取书籍列表"""
 		query = Book.query
 
-		if 'title' in keywords:
-			query = query.filter(Book.title.like(f"%{keywords['title']}%"))
-		if 'author' in keywords:
-			query = query.filter(Book.author.like(f"%{keywords['author']}%"))
-		if 'publisher' in keywords:
-			query = query.filter(Book.publisher.like(f"%{keywords['publisher']}%"))
-		if 'category_id' in keywords and keywords['category_id'] is not None:
-			query = query.filter(Book.category_id == keywords['category_id'])
+		filters = {
+			'title': Book.title.like,
+			'author': Book.author.like,
+			'publisher': Book.publisher.like,
+			'category_id': Book.category_id.__eq__
+		}
+
+		for key, filter_func in filters.items():
+			if key in keywords and keywords[key]:
+				if key == 'category_id':
+					query = query.filter(filter_func(keywords[key]))
+				else:
+					query = query.filter(filter_func(f"%{keywords[key]}%"))
 
 		total = query.count()
-		books = query.offset((page - 1) * per_page).limit(per_page).all()
+		books = query.offset((page - 1) * per_page).limit(per_page).all() # 从这里获取不同分页的内容
 
 		return books, total
 
 	@staticmethod
 	def update_book(id, update_data):
 		"""更新书籍信息"""
+		# TODO:书籍分类不存在
 		book = Book.query.get(id)
 		if 'title' in update_data:
 			book.title = update_data['title']
@@ -80,7 +86,7 @@ class BookServices:
 		return ReturnCode.SUCCESS
 
 	@staticmethod
-	def recommend_book(id):
+	def recommend_book_module(id):
 		"""推荐书籍"""
 		borrow_list = [borrow.book_id for borrow in Borrow.query.filter_by(user_id=id)]
 		book_list = [book.id for book in Book.query.order_by(func.random()).limit(5).all()]
@@ -88,7 +94,7 @@ class BookServices:
 		if borrow_list is None:
 			return None
 
-		recommend_list = infer(borrow_list, book_list)
+		recommend_list = infer(borrow_list, book_list)  # 推理
 		recommend_list = [book_id for book_id, rating in zip(book_list, recommend_list) if
 		                  rating > 3.7]  # TODO : 为什么是3.7为分界点呢，因为模型有点问题，收敛3.7左右
 

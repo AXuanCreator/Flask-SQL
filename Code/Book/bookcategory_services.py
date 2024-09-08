@@ -32,6 +32,7 @@ class BookCategoryServices:
     # 类别信息更新
     @staticmethod
     def update_book_category(id, category_name):
+        # TODO:当书籍旧分类下拥有书籍时，更新失败
         category = BookCategory.query.get(id)
         if category is None or category_name is None:
             return ReturnCode.FAIL
@@ -44,6 +45,7 @@ class BookCategoryServices:
     # 类别删除
     @staticmethod
     def delete_book_category(id):
+        # TODO:当书籍分类下拥有书籍时，不允许删除
         category = BookCategory.query.get(id)
         if category is None:
             return ReturnCode.CATEGORY_NOT_EXIST

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员面板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #f4f4f4;
+            height: 100vh;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .log-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            text-decoration: none;
+            border: 1px solid #333;
+            border-radius: 5px;
+            color: #333;
+        }
+        .pagination a.active {
+            background-color: #333;
+            color: white;
+        }
+        .submit-button {
+            width: 5%;
+            padding: 5px;
+            border: 1.5px solid black; /* 黑色轮廓 */
+            border-radius: 20px; /* 圆角按钮 */
+            background-color: transparent; /* 无背景 */
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+        }
+        .submit-button:hover {
+            background-color: #ddd; /* 鼠标悬停效果 */
+        }
+    </style>
+</head>
+<body>
+<!-- 侧边栏导航 -->
+<div class="sidebar">
+    <h3>管理员面板</h3>
+    <a href="{{ url_for('admin.admin_info', id=id) }}">管理员信息</a>
+    <a href="{{ url_for('admin.modify_admin_password', id=id) }}">更改密码</a>
+    <a href="{{ url_for('admin.check_logging', id=id) }}">查看日志</a>
+    <a href="{{ url_for('main', id=id) }}">回到主页</a>
+</div>
+
+<div class="content">
+    {% block content %}
+        <h2>日志记录</h2>
+
+        <!-- 日期选择器表单 -->
+        <form method="get" action="{{ url_for('admin.check_logging', id=id) }}">
+            <label for="log-date">选择日期：</label>
+            <input type="date" id="log-date" name="date">
+            <button type="submit" class="submit-button">查看日志</button>
+        </form>
+
+        <table>
+            <thead>
+            <tr>
+                <th>用户</th>
+                <th>操作</th>
+                <th>书籍</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.user }}</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.book }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- 分页控件 -->
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('admin.check_logging', id=id, page=page-1, date=request.args.get('date')) }}">上一页</a>
+            {% endif %}
+            <span>页码：{{ page }}</span>
+            {% if has_next %}
+                <a href="{{ url_for('admin.check_logging', id=id, page=page+1, date=request.args.get('date')) }}">下一页</a>
+            {% endif %}
+        </div>
+    {% endblock %}
+</div>
+</body>
+</html>

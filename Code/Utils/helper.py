@@ -1,7 +1,8 @@
 import random
 import re
 import string
-
+import os
+from datetime import datetime
 
 class Helper:
 	@staticmethod
@@ -26,3 +27,12 @@ class Helper:
 	@staticmethod
 	def generate_random_string_with_choice(pattern, min, max):
 		return ''.join(random.choices(pattern, k=random.randint(min, max)))
+
+	@staticmethod
+	def logging(text):
+		current_data = datetime.now().strftime('%Y-%m-%d')
+		log_filename = f'Logs/{current_data}.log'
+
+		# 以追加的方式打开该文件，若不存在会自动创建
+		with open(log_filename, 'a', encoding='utf-8') as log:
+			log.write(text + '\n')

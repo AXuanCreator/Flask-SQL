@@ -1,6 +1,6 @@
 from math import ceil
 
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, url_for
 from Config import ReturnCode, BookCategory
 from Utils import Response, ResponseCode, Helper
 from .bookcategory_services import BookCategoryServices
@@ -24,7 +24,7 @@ def book_category_info():
             case ReturnCode.SUCCESS:
                 return Response.response(ResponseCode.SUCCESS, '类别添加成功', BookCategory.query.filter_by(name=name).first().id)
             case ReturnCode.CATEGORY_EXIST:
-                return render_template('error.html', output='类别名字重复，添加失败')
+                return render_template('message.html', title='错误', message='类别错误', redirect_url=url_for('main'))
 
     elif request.method == 'GET':
         # 分页获取类别
@@ -32,7 +32,7 @@ def book_category_info():
             page = int(request.args.get('page', 1))  # 页码
             per_page = int(request.args.get('per_page', 10))  # 每页书数
         except ValueError:
-            return render_template('error.html', output='参数错误')
+            return render_template('message.html', title='错误', message='参数错误', redirect_url=url_for('main'))
 
         categories, total = BookCategoryServices.list_book_categories(page, per_page)
 
@@ -52,7 +52,7 @@ def book_category_info():
             }
             return Response.response(ResponseCode.SUCCESS, '获取全部图书类别', response_data)
         else:
-            return render_template('error.html', output='图书类别为空')
+            return render_template('message.html', title='错误', message='不存在该类别', redirect_url=url_for('main'))
 
 
 ########################################################################
@@ -70,7 +70,7 @@ def book_category_change(id):
             case ReturnCode.SUCCESS:
                 return Response.response(ResponseCode.SUCCESS, '书籍类别更新成功', Helper.to_dict(BookCategory.query.filter_by(name=new_name).first()))
             case ReturnCode.FAIL:
-                return render_template('error.html', output='书籍类别不存在或更新有误')
+                return render_template('message.html', title='错误', message='书籍类别不存在/错误', redirect_url=url_for('main'))
 
     elif request.method == 'DELETE':
         # 删除分类
@@ -78,4 +78,4 @@ def book_category_change(id):
             case ReturnCode.SUCCESS:
                 return Response.response(ResponseCode.SUCCESS, '书籍类别删除成功', id)
             case ReturnCode.CATEGORY_NOT_EXIST:
-                return render_template('error.html', output='书籍类别不存在')
+                return render_template('message.html', title='错误', message='书籍类别不存在', redirect_url=url_for('main'))

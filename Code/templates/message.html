@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>操作成功</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .message-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .message-container h1 {
+            color: #46d9be;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .message-container p {
+            color: #333333;
+            font-size: 16px;
+        }
+        .message-container a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            color: #ffffff;
+            background-color: #90ffee;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .message-container a:hover {
+            background-color: #27ecb1;
+        }
+    </style>
+</head>
+<body>
+<div class="message-container">
+    <h1>{{ title }}</h1>
+    <p>{{ message }}</p>
+    {% if redirect_url %}
+        <a href="{{ redirect_url }}">返回</a>
+    {% endif %}
+</div>
+</body>
+</html>

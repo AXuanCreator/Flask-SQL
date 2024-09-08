@@ -6,24 +6,29 @@ from Config import db, Borrow, Book, User
 class BorrowService:
 	@staticmethod
 	def list_borrow(args):
+		# 获取查询参数
 		id = args.get('id')
 		user_id = args.get('user_id')
 		book_id = args.get('book_id')
 		category_id = args.get('category_id')
-		contain_finished = int(args.get('contain_finished'))
-		conditions = ['user_id', 'book_id', 'category_id', 'contain_finished', 'id']
-		res = db.session.query(Borrow).join(Book)
-		if user_id != '':
-			res = res.filter(Borrow.user_id == int(user_id))
-		if book_id != '':
-			res = res.filter(Borrow.book_id == int(book_id))
-		if category_id != '':
-			res = res.filter(Book.category_id == int(category_id))
-		if not contain_finished:
-			res = res.filter(Borrow.really_return_date.is_(None))
-		if id != '':
-			res = res.filter(Borrow.id == id)
-		return res.all()
+		contain_finished = args.get('contain_finished', '0')
+
+		query = db.session.query(Borrow).join(Book)
+
+		# 添加条件过滤
+		if user_id:
+			query = query.filter(Borrow.user_id == int(user_id))
+		if book_id:
+			query = query.filter(Borrow.book_id == int(book_id))
+		if category_id:
+			query = query.filter(Book.category_id == int(category_id))
+		if contain_finished == '0':  # 默认不包含已归还的借阅记录
+			query = query.filter(Borrow.really_return_date.is_(None))
+		if id:
+			query = query.filter(Borrow.id == int(id))
+
+		# 返回查询结果，此事为一个SQLAlchemy对象
+		return query
 
 	@staticmethod
 	def borrow_book(body):
@@ -83,5 +88,8 @@ class BorrowService:
 		if datetime.datetime.now() > borrow.return_date:
 			borrow.really_return_date = datetime.datetime.now()
 			return 0
+
 		borrow.return_date = datetime.datetime.now() + datetime.timedelta(days=user.max_borrow_days)
+		db.session.commit()
+
 		return 1
