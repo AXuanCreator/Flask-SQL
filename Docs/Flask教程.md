@@ -2,9 +2,9 @@
 
 本文档用于简单介绍Flask的基础知识点，在阅读本文档后，可以使用Flask完成一个简单的Web后端。
 
-同时，可以搭配 [Flask不太专业的实战教程](https://www.bilibili.com/video/BV121421C7kt/?spm_id_from=333.788&vd_source=c9b8ab6fce6b4986cf89061f00aa9dc4) 视频一同食用
+同时，可以搭配 [Flask不太专业的实战教程](https://www.bilibili.com/video/BV121421C7kt/?spm_id_from=333.788&vd_source=c9b8ab6fce6b4986cf89061f00aa9dc4) 视频一同食用 
 
-
+</br>
 
 ## 环境配置
 
